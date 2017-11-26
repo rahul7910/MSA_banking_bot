@@ -1,15 +1,16 @@
 var builder = require('botbuilder');
 var GreetingCardBuilder = require('./GreetingCard');
 var account = require("./account"); // need to create  
-var deposit = require("./makeDeposit"); // change to transaction ? 
+var deposit = require("./Deposit"); // change to transaction ? 
+var withdraw = require("./Withdraw");
 
 exports.startDialog = function (bot) {
     
-    var recognizer = new builder.LuisRecognizer('	https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q=');
+    var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q=');
 
     bot.recognizer(recognizer);
 
-    exports.startDialog = function (bot) {
+    
         //welcome display when bot opens 
         bot.dialog('WelcomeIntent', function (session, args) {
             
@@ -19,7 +20,7 @@ exports.startDialog = function (bot) {
             matches: 'WelcomeIntent'
         });
     
-    }
+    
 
     bot.dialog('CreateAccount', [
         function (session, args, next) {
