@@ -1,0 +1,23 @@
+{
+  "name": "msa_banking_bot",
+  "version": "1.0.0",
+  "description": "MSA banking bot ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rahul7910/MSA_banking_bot.git"
+  },
+  "author": "Rahul Issar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rahul7910/MSA_banking_bot/issues"
+  },
+  "homepage": "https://github.com/rahul7910/MSA_banking_bot#readme",
+  "dependencies": {
+    "botbuilder": "^3.12.0",
+    "restify": "^6.3.4"
+  }
+}
