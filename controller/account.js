@@ -1,39 +1,24 @@
 var rest = require('../API/Restclient');
 var builder = require('botbuilder');
+/*
+var rest = require('../API/Restclient');
+
+exports.displayFavouriteFood = function getFavouriteFood(session, username){
+    var url = 'https://foodbotmsa.azurewebsites.net/tables/FoodBot';
+    rest.getFavouriteFood(url, session, username, handleFavouriteFoodResponse)
+};
+*/
 
 exports.displayAccount = function getAccount(session, username){
-    var url = 'https://bankappmarcus.azurewebsites.net/tables/BankBot';
+    var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
     rest.getAccount(url, session, username, handleGetAccountResponse)
 };
 
 exports.createNewAccount = function postAccount(session, username, currency){
-    var url = 'https://bankappmarcus.azurewebsites.net/tables/BankBot';
+    var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
     rest.postAccount(url, username, currency);
-    session.send("Your account has been created!");
+    session.send("Congrats! You have just created a new account with Contoso Bank!");
 };
-
-exports.deleteAccount = function deleteAccount(session,username,currency){
-    var url  = 'https://bankappmarcus.azurewebsites.net/tables/BankBot';
-
-
-    rest.getAccount(url,session, username,function(message,session,username){
-     var   allAccounts = JSON.parse(message);
-        for(var i in allAccounts) {
-
-            if (allAccounts[i].currency === currency && allAccounts[i].username === username) {
-
-                console.log(allAccounts[i]);
-
-                rest.deleteAccount(url,session,username,currency, allAccounts[i].id ,handleDeletedAccountResponse)
-
-            }
-        }
-    });
-};
-
-function handleDeletedAccountResponse(body,session,username, currency) {
-    session.send('Deleted');
-}    
 
 
 function handleGetAccountResponse(message, session, username) {
@@ -42,7 +27,7 @@ function handleGetAccountResponse(message, session, username) {
     for (var index in getAccountResponse) {
         var account = {};
         account.title = getAccountResponse[index].currency;
-        account.value = getAccountResponse[index].amount;
+        account.value = getAccountResponse[index].balance;
         allAccounts.push(account);      
     }
     

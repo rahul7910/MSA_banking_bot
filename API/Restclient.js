@@ -1,4 +1,17 @@
 var request = require('request');
+/*
+var request = require('request')
+
+exports.getFavouriteFood = function getData(url, session, username, callback){
+    request.get(url, {'headers':{'ZUMO-API-VERSION': '2.0.0'}}, function(err,res,body){
+        if(err){
+            console.log(err);
+        }else {
+            callback(body, session, username);
+        }
+    });
+};
+*/
 
 exports.getCurrencyData = function getData(url,session, entities, callback){
 
@@ -11,13 +24,13 @@ exports.getCurrencyData = function getData(url,session, entities, callback){
     });
 };
 
-exports.getExchangeData = function getData(url,session, entities, amount, callback){
+exports.getExchangeData = function getData(url,session, entities, balance, callback){
     
         request.get(url,function(err,res,body){
             if(err){
                 console.log(err);
             }else {
-                callback(body,session, entities, amount);
+                callback(body,session, entities, balance);
             }
         });
     };
@@ -43,7 +56,7 @@ exports.postAccount = function getData(url, username, currency){
         json: {
             "username" : username,
             "currency" : currency,
-            "amount" : "0"
+            "balance" : "0"
         }
       };
       
@@ -57,7 +70,7 @@ exports.postAccount = function getData(url, username, currency){
       });
 };
 
-exports.postDeposit = function getData(url, username, currency, amount){
+exports.postDeposit = function getData(url, username, currency, balane){
     var options = {
         url: url,
         method: 'POST',
@@ -68,7 +81,7 @@ exports.postDeposit = function getData(url, username, currency, amount){
         json: {
             "username" : username,
             "currency" : currency,
-            "amount" : amount
+            "balance" : balance
         }
       };
       

@@ -109,6 +109,51 @@ exports.startDialog = function (bot) {
         matches: 'GetAccount'
     });
 
+    bot.dialog('LookForRate', [
+        function (session, args) {
+            //if (!isAttachment(session)) {
+                var currencyEntities = builder.EntityRecognizer.findAllEntities(args.intent.entities, 'Currency');
+
+                if (currencyEntities.length === 2) {
+                    session.send('Looking for conversion rate from \'%s\' to \'%s\'...', currencyEntities[0].entity, currencyEntities[1].entity);
+                    conversion.displayConversionRate(currencyEntities, session);
+
+    
+                } else {
+                    session.send("No currency or only 1 is identified! Try: nzd to usd");
+                }
+            //}
+        }
+    ]).triggerAction({
+        matches: 'LookForRate'
+    });
+    
+    bot.dialog('Convert', [
+        function (session, args, next) {
+            session.dialogData.args = args || {};
+            if (!session.conversationData["username"]) {
+                builder.Prompts.text(session, "Enter a username to setup your account.");
+            } else {
+                next(); // Skip if we already have this info.
+            }
+        },
+        function (session, results,next) {
+            //if (!isAttachment(session)) {
+
+                var currencyEntities = builder.EntityRecognizer.findAllEntities(session.dialogData.args.intent.entities, 'Currency');
+                var amountEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'Amount');
+
+                if (currencyEntities.length === 2) {
+                    session.send('Converting \'%s\' \'%s\' to \'%s\'...', amountEntity.entity, currencyEntities[0].entity, currencyEntities[1].entity);
+                    conversion.exchangeCurrency(currencyEntities, amountEntity.entity, session);
+                } else {
+                    session.send("I did not get that! Try: Convert 1000 aud to sgd!");
+                }
+            //}
+        }
+    ]).triggerAction({
+        matches: 'Convert'
+    });
 
 }
 
