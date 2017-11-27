@@ -1,8 +1,8 @@
 var builder = require('botbuilder');
+var account = require("./account");
+var deposit = require("./Deposit");
+//var conversion = require("./conversion");
 var GreetingCardBuilder = require('./GreetingCard');
-var account = require("./account"); // need to create  
-var deposit = require("./Deposit"); // change to transaction ? 
-var withdraw = require("./Withdraw");
 
 exports.startDialog = function (bot) {
     
@@ -10,17 +10,15 @@ exports.startDialog = function (bot) {
 
     bot.recognizer(recognizer);
 
-    
-        //welcome display when bot opens 
-        bot.dialog('WelcomeIntent', function (session, args) {
-            
-            GreetingCardBuilder.displayGreetingCard(session);
-            
-        }).triggerAction({
-            matches: 'WelcomeIntent'
-        });
-    
-    
+//welcome message here
+
+    bot.dialog('WelcomeIntent', function (session, args) {
+        
+        GreetingCardBuilder.displayGreetingCard(session);
+
+    }).triggerAction({
+        matches: 'WelcomeIntent'
+    });
 
     bot.dialog('CreateAccount', [
         function (session, args, next) {
@@ -38,21 +36,21 @@ exports.startDialog = function (bot) {
                     session.conversationData["username"] = results.response;
                 }
 
-                var currencyEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'Currency');
+                var bankingEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'Bank');
 
-                if (currencyEntity) {
-                    session.send('Creating a new account in \'%s\'...', currencyEntity.entity);
-                    account.createNewAccount(session, session.conversationData["username"], currencyEntity.entity);
+                if (bankingEntity) {
+                    session.send('Creating your new account ');
+                    account.createNewAccount(session, session.conversationData["username"]);
     
                 } else {
-                    session.send("No currency identified! Try: Create a new account in NZD");
+                    session.send("Please Try again");
                 }
             //}
         }
     ]).triggerAction({
         matches: 'CreateAccount'
     });
-    // add withdrawl 
+
     bot.dialog('MakeDeposit', [
         function (session, args, next) {
             session.dialogData.args = args || {};        
@@ -69,12 +67,12 @@ exports.startDialog = function (bot) {
                     session.conversationData["username"] = results.response;
                 }
 
-                var currencyEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'Currency');
-                var amountEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'Amount');
+                var bankingEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'banking');
+                var balanceEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'balance');
 
-                if (currencyEntity && amountEntity) {
-                    session.send('Making a deposit of '+ amountEntity.entity + ' ' + currencyEntity.entity + ' for you...');
-                    deposit.makeDeposit(session, session.conversationData["username"], currencyEntity.entity,  amountEntity.entity);
+                if (bankingEntity && balanceEntity) {
+                    session.send('Making a deposit of '+ balanceEntity.entity + ' ' + bankingEntity.entity + ' for you...');
+                    deposit.makeDeposit(session, session.conversationData["username"], bankingEntity.entity,  balanceEntity.entity);
                     session.send("Transaction done!");       
                 } else {
                     session.send("I didn't get that! Try in format: Deposit 500 nzd");
@@ -109,18 +107,48 @@ exports.startDialog = function (bot) {
         matches: 'GetAccount'
     });
 
+
+    bot.dialog('DeleteAccount', [
+        function (session, args, next) {
+            session.dialogData.args = args || {};
+            if (!session.conversationData["username"]) {
+                builder.Prompts.text(session, "Enter a username to setup your account.");
+            } else {
+                next(); // Skip if we already have this info.
+            }
+        },
+        function (session, results,next) {
+            //if (!isAttachment(session)) {
+
+                session.send("You want to delete one of your accounts.");
+
+                var bankingEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'banking');
+
+                if (bankingEntity) {
+                    session.send('Deleting \'%s\' account...', bankingEntity.entity);
+                    account.deleteAccount(session,session.conversationData['username'],bankingEntity.entity); //<--- CALLL WE WANT
+                } else {
+                    session.send("No account identified! Try: Remove aud account!");
+                }
+            //}
+        }
+    ]).triggerAction({
+        matches: 'DeleteAccount'
+    });
+    /*
+    
     bot.dialog('LookForRate', [
         function (session, args) {
             //if (!isAttachment(session)) {
-                var currencyEntities = builder.EntityRecognizer.findAllEntities(args.intent.entities, 'Currency');
+                var bankingEntities = builder.EntityRecognizer.findAllEntities(args.intent.entities, 'banking');
 
-                if (currencyEntities.length === 2) {
-                    session.send('Looking for conversion rate from \'%s\' to \'%s\'...', currencyEntities[0].entity, currencyEntities[1].entity);
-                    conversion.displayConversionRate(currencyEntities, session);
+                if (bankingEntities.length === 2) {
+                    session.send('Looking for conversion rate from \'%s\' to \'%s\'...', bankingEntities[0].entity, bankingEntities[1].entity);
+                    conversion.displayConversionRate(bankingEntities, session);
 
     
                 } else {
-                    session.send("No currency or only 1 is identified! Try: nzd to usd");
+                    session.send("No banking or only 1 is identified! Try: nzd to usd");
                 }
             //}
         }
@@ -140,12 +168,12 @@ exports.startDialog = function (bot) {
         function (session, results,next) {
             //if (!isAttachment(session)) {
 
-                var currencyEntities = builder.EntityRecognizer.findAllEntities(session.dialogData.args.intent.entities, 'Currency');
-                var amountEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'Amount');
+                var bankingEntities = builder.EntityRecognizer.findAllEntities(session.dialogData.args.intent.entities, 'banking');
+                var balanceEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'balance');
 
-                if (currencyEntities.length === 2) {
-                    session.send('Converting \'%s\' \'%s\' to \'%s\'...', amountEntity.entity, currencyEntities[0].entity, currencyEntities[1].entity);
-                    conversion.exchangeCurrency(currencyEntities, amountEntity.entity, session);
+                if (bankingEntities.length === 2) {
+                    session.send('Converting \'%s\' \'%s\' to \'%s\'...', balanceEntity.entity, bankingEntities[0].entity, bankingEntities[1].entity);
+                    conversion.exchangebanking(bankingEntities, balanceEntity.entity, session);
                 } else {
                     session.send("I did not get that! Try: Convert 1000 aud to sgd!");
                 }
@@ -154,46 +182,5 @@ exports.startDialog = function (bot) {
     ]).triggerAction({
         matches: 'Convert'
     });
-
+    */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

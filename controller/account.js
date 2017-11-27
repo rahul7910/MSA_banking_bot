@@ -14,9 +14,9 @@ exports.displayAccount = function getAccount(session, username){
     rest.getAccount(url, session, username, handleGetAccountResponse)
 };
 
-exports.createNewAccount = function postAccount(session, username, currency){
+exports.createNewAccount = function postAccount(session, username){
     var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    rest.postAccount(url, username, currency);
+    rest.postAccount(url, username);
     session.send("Congrats! You have just created a new account with Contoso Bank!");
 };
 
@@ -26,7 +26,6 @@ function handleGetAccountResponse(message, session, username) {
     var allAccounts = [];
     for (var index in getAccountResponse) {
         var account = {};
-        account.title = getAccountResponse[index].currency;
         account.value = getAccountResponse[index].balance;
         allAccounts.push(account);      
     }

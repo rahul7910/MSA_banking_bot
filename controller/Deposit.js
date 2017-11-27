@@ -1,22 +1,22 @@
 var rest = require('../API/Restclient');
 
-exports.makeDeposit = function postDeposit (session, username, currency, balance){
+exports.makeDeposit = function postDeposit (session, username, balance){
     var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    session.send("Checking if you have an account in " + currency);
+    session.send("Checking if you have an account ");
 
     rest.getAccount(url, session, username, function(message, session, username){
         var allAccounts = JSON.parse(message);
         var noAccount = "true";
         for (var i in allAccounts) {  
-            if (allAccounts[i].currency === currency && allAccounts[i].username === username) {
+            if (allAccounts[i].username === username) {
                 var currentbalance = allAccounts[i].balance;
                 var newbalance = parseInt(currentbalance) + parseInt(balance);  
 
-                rest.deleteAccount(url,session,username,currency, allAccounts[i].id , function(message,session,username){
+                rest.deleteAccount(url,session,username, allAccounts[i].id , function(message,session,username){
                     console.log("deleted");
                 });
 
-                rest.postDeposit(url, username, currency, newbalance);
+                rest.postDeposit(url, username, newbalance);
 
                 noAccount = false;
             } 
@@ -24,7 +24,7 @@ exports.makeDeposit = function postDeposit (session, username, currency, balance
         }  
 
         if (noAccount === "true") {
-            session.send("You do not have an account in " + currency + "!");
+            session.send("You do not have an account in !");
         }
     })
 
@@ -32,15 +32,15 @@ exports.makeDeposit = function postDeposit (session, username, currency, balance
 };
 
 
-exports.withdrawn = function postDeposit (session, username, currency, balance){
+exports.withdrawn = function postDeposit (session, username, balance){
     var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    session.send("Checking if you have an account in " + currency);
+    session.send("Checking if you have an account in ");
 
     rest.getAccount(url, session, username, function(message, session, username){
         var allAccounts = JSON.parse(message);
         var noAccount = "true";
         for (var i in allAccounts) {  
-            if (allAccounts[i].currency === currency && allAccounts[i].username === username) {
+            if (allAccounts[i].username === username) {
                 var currentbalance = allAccounts[i].balance;
                 var newbalance = parseInt(currentbalance) - parseInt(balance);  
 
@@ -48,7 +48,7 @@ exports.withdrawn = function postDeposit (session, username, currency, balance){
                     console.log("deleted");
                 });
 
-                rest.postDeposit(url, username, currency, newbalance);
+                rest.postDeposit(url, username, newbalance);
 
                 noAccount = false;
             } 
@@ -56,7 +56,7 @@ exports.withdrawn = function postDeposit (session, username, currency, balance){
         }  
 
         if (noAccount === "true") {
-            session.send("You do not have an account in " + currency + "!");
+            session.send("You do not have an account in!");
         }
     })
 

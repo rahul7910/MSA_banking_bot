@@ -1,17 +1,4 @@
 var request = require('request');
-/*
-var request = require('request')
-
-exports.getFavouriteFood = function getData(url, session, username, callback){
-    request.get(url, {'headers':{'ZUMO-API-VERSION': '2.0.0'}}, function(err,res,body){
-        if(err){
-            console.log(err);
-        }else {
-            callback(body, session, username);
-        }
-    });
-};
-*/
 
 exports.getCurrencyData = function getData(url,session, entities, callback){
 
@@ -45,7 +32,7 @@ exports.getAccount = function getData(url, session, username, callback){
     });
 };
 
-exports.postAccount = function getData(url, username, currency){
+exports.postAccount = function getData(url, username){
     var options = {
         url: url,
         method: 'POST',
@@ -55,7 +42,7 @@ exports.postAccount = function getData(url, username, currency){
         },
         json: {
             "username" : username,
-            "currency" : currency,
+            //"currency" : currency,
             "balance" : "0"
         }
       };
@@ -70,7 +57,7 @@ exports.postAccount = function getData(url, username, currency){
       });
 };
 
-exports.postDeposit = function getData(url, username, currency, balane){
+exports.postDeposit = function getData(url, username, balance){
     var options = {
         url: url,
         method: 'POST',
@@ -80,7 +67,7 @@ exports.postDeposit = function getData(url, username, currency, balane){
         },
         json: {
             "username" : username,
-            "currency" : currency,
+           // "currency" : currency,
             "balance" : balance
         }
       };
@@ -95,7 +82,7 @@ exports.postDeposit = function getData(url, username, currency, balane){
       });
 };
 
-exports.deleteAccount = function deleteData(url,session, username , currency, id, callback){
+exports.deleteAccount = function deleteData(url,session, username , id, callback){
     var options = {
         url: url + "\\" + id,
         method: 'DELETE',
@@ -108,7 +95,7 @@ exports.deleteAccount = function deleteData(url,session, username , currency, id
     request(options,function (err, res, body){
         if( !err && res.statusCode === 200){
             console.log(body);
-            callback(body,session,username, currency);
+            callback(body,session,username);
         }else {
             console.log(err);
             console.log(res);
