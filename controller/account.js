@@ -11,31 +11,30 @@ exports.displayFavouriteFood = function getFavouriteFood(session, username){
 
 
 //dealing with login of accounts 
-/*
 exports.attemptLogin = function lookForUser(session, username, password){
     var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
     rest.lookForUser(url,session, username, password, handleUserLookupResponse);
 }
-*/
-/*
+
 exports.reccordNewLogin = function postNewLogin(session, username){
     var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
     rest.postNewLogin(url,session, username);
 }
-*/
-//------------------------------------------------------------------------------------------
 
 //dealing with account display and creation ------------------------------------------------
-exports.displayAccount = function getAccount(session, username,password){
+exports.displayAccount = function getAccount(session, username, password){
     var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    rest.getAccount(url, session, username, password, handleUserLookupResponse)
+    rest.getAccount(url, session, username, password, handleGetAccountResponse)
 };
 
+//do i need to add password paramter here ? 
 exports.createNewAccount = function postAccount(session, username, password){
     var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    rest.postAccount(url, username, password);
+    rest.postAccount(url,username,password);
     session.send("Congrats! You have just created a new account with Contoso Bank!");
 };
+
+
 //------------------------------------------------------------------------------------------
 
 function handleUserLookupResponse(message,session,username,password){

@@ -22,7 +22,7 @@ exports.getExchangeData = function getData(url,session, entities, balance, callb
         });
     };
 */
-/*
+
 exports.lookForUser = function getData(url, session, username, password, callback){
     
         request.get(url, {'headers':{'ZUMO-API-VERSION': '2.0.0'}}, function handleGetReponse(err,res,body){
@@ -35,13 +35,13 @@ exports.lookForUser = function getData(url, session, username, password, callbac
             
         });
     };
-*/
-exports.getAccount = function getData(url, session, username, password, callback){
+
+exports.getAccount = function getData(url, session, username, callback, password){
     request.get(url, {'headers':{'ZUMO-API-VERSION': '2.0.0'}}, function(err,res,body){
         if(err){
             console.log(err);
         }else {
-            callback(body, session, username,password);
+            callback(body, session, username, password);
         }
     });
 };
@@ -59,6 +59,7 @@ exports.postAccount = function getData(url, username, password){
             //"currency" : currency,
             "balance" : "0",
             "password" : password
+            //add password
         }
       };
       
@@ -72,8 +73,7 @@ exports.postAccount = function getData(url, username, password){
       });
 };
 
-/*
-exports.postNewLogin = function postData(url, username){
+exports.postNewLogin = function postData(url, session, username){
     
     var options = {
         url: url, method: 'POST',
@@ -96,7 +96,7 @@ exports.postNewLogin = function postData(url, username){
     });
 
 };
-*/
+
 exports.postDeposit = function getData(url, username, balance){
     var options = {
         url: url,

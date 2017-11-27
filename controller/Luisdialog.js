@@ -91,7 +91,7 @@ bot.dialog('CreateAccount', [
                 session.conversationData["password"] = results.response;
             }
     
-            loginData.displayAccount(session,session.conversationData["username"],session.conversationData["password"]);
+            loginData.attemptLogin(session,session.conversationData["username"],session.conversationData["password"]);
          //   loginData.attemptLogin(session,session.conversationData["username"],session.conversationData["password"]);
          }]
         
