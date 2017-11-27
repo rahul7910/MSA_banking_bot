@@ -1,5 +1,5 @@
 var request = require('request');
-
+/*
 exports.getCurrencyData = function getData(url,session, entities, callback){
 
     request.get(url,function(err,res,body){
@@ -21,18 +21,32 @@ exports.getExchangeData = function getData(url,session, entities, balance, callb
             }
         });
     };
-
-exports.getAccount = function getData(url, session, username, callback){
+*/
+/*
+exports.lookForUser = function getData(url, session, username, password, callback){
+    
+        request.get(url, {'headers':{'ZUMO-API-VERSION': '2.0.0'}}, function handleGetReponse(err,res,body){
+    
+            if(err){
+                console.log(err);
+            }else {
+                callback(body, session, username, password);
+            }
+            
+        });
+    };
+*/
+exports.getAccount = function getData(url, session, username, password, callback){
     request.get(url, {'headers':{'ZUMO-API-VERSION': '2.0.0'}}, function(err,res,body){
         if(err){
             console.log(err);
         }else {
-            callback(body, session, username);
+            callback(body, session, username,password);
         }
     });
 };
 
-exports.postAccount = function getData(url, username){
+exports.postAccount = function getData(url, username, password){
     var options = {
         url: url,
         method: 'POST',
@@ -43,7 +57,8 @@ exports.postAccount = function getData(url, username){
         json: {
             "username" : username,
             //"currency" : currency,
-            "balance" : "0"
+            "balance" : "0",
+            "password" : password
         }
       };
       
@@ -57,6 +72,31 @@ exports.postAccount = function getData(url, username){
       });
 };
 
+/*
+exports.postNewLogin = function postData(url, username){
+    
+    var options = {
+        url: url, method: 'POST',
+        headers: {
+            'ZUMO-API-VERSION': '2.0.0',
+            'Content-Type':'application/json'
+        },
+        json: {
+            "username" : username,
+        }
+    }  
+
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            console.log(body);
+        }
+        else{
+            console.log(error);
+        }
+    });
+
+};
+*/
 exports.postDeposit = function getData(url, username, balance){
     var options = {
         url: url,

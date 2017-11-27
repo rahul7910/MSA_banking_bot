@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Contoso Bank Limited</title>
+
+    <!--Linking CSS files to style the website-->
+    <link href="style.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        function openChat() {
+            var frame = document.getElementById("chat-frame");
+            frame.className = "";
+            var img = document.getElementById("chat-button");
+            img.className = "hide";
+        }
+
+        function closeChat() {
+            var frame = document.getElementById("chat-frame");
+            frame.className = "hide";
+            var img = document.getElementById("chat-button");
+            img.className = "";
+        }
+    </script>
+</head>
+<body>
+
+    <div id="titleBlock">
+        <img src="res/images/msp_logo.png" id="logo" />
+		
+		
+        <h1 id="heading">Contoso Bank Limited</h1>
+    </div>
+
+    <div id="content">
+        <div id="left-content">
+            <p>
+             
+			 An award winning bank which is currently expanding it's wings to better serve customers. 
+
+			Our new bot (name of bot) will help you with any problems or queries you may have. (name of bot) provides the following services: 
+			
+			- Create an account 
+			- Login to account 
+			- Check balance 
+			
+			More features to be released soon ! 
+			</p>
+        </div>
+        <div id="right-content">
+            <img src="res/images/vs.PNG" />
+            <img src="res/images/botframework.PNG" />
+        </div>
+    </div>
+
+    <div id="chat">
+        <img id="chat-button" src="res/images/chatico.png" onclick="openChat()" />
+        <div id="chat-frame" class="hide">
+            <iframe src='https://webchat.botframework.com/embed/andrew-test-bot?s=PJFurSqPjgU.cwA.HN4.ehCU9QX6AbBjXcEHoYy2F18CnK_d5tre-zpTjk1kCcc'></iframe>
+			<img src="res/images/minus.png" onclick="closeChat()" />
+        </div>
+    </div>
+
+</body>
+</html>

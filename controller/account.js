@@ -9,17 +9,60 @@ exports.displayFavouriteFood = function getFavouriteFood(session, username){
 };
 */
 
-exports.displayAccount = function getAccount(session, username){
+
+//dealing with login of accounts 
+/*
+exports.attemptLogin = function lookForUser(session, username, password){
+    var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
+    rest.lookForUser(url,session, username, password, handleUserLookupResponse);
+}
+*/
+/*
+exports.reccordNewLogin = function postNewLogin(session, username){
+    var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
+    rest.postNewLogin(url,session, username);
+}
+*/
+//------------------------------------------------------------------------------------------
+
+//dealing with account display and creation ------------------------------------------------
+exports.displayAccount = function getAccount(session, username,password){
     var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    rest.getAccount(url, session, username, handleGetAccountResponse)
+    rest.getAccount(url, session, username, password, handleUserLookupResponse)
 };
 
-exports.createNewAccount = function postAccount(session, username){
+exports.createNewAccount = function postAccount(session, username, password){
     var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    rest.postAccount(url, username);
+    rest.postAccount(url, username, password);
     session.send("Congrats! You have just created a new account with Contoso Bank!");
 };
+//------------------------------------------------------------------------------------------
 
+function handleUserLookupResponse(message,session,username,password){
+    var loginLookupResponse = JSON.parse(message);
+
+    var foundUser = false;
+
+    for (var i in loginLookupResponse){
+        if (username == loginLookupResponse[i].username){
+            if(password == loginLookupResponse[i].password){
+                foundUser = true;
+            }
+        }
+    }
+
+    if (foundUser){
+        // Post the new login to the records table
+        var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
+        rest.postNewLogin(url,session, username);
+
+        session.send("%s, you have successfully logged in. How can I help?",username);
+
+    } else {
+        session.send("Username or password incorrect, please try again");
+        //session.send("Account Query");
+    }    
+}
 
 function handleGetAccountResponse(message, session, username) {
     var getAccountResponse = JSON.parse(message);
@@ -29,7 +72,8 @@ function handleGetAccountResponse(message, session, username) {
         account.value = getAccountResponse[index].balance;
         allAccounts.push(account);      
     }
-    
+
+
     // Print all accounts for the user that is currently logged in
     session.send(new builder.Message(session).addAttachment({
         contentType: "application/vnd.microsoft.card.adaptive",
