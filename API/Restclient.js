@@ -59,7 +59,7 @@ exports.AddAccount = function sendData(url, username){
         },
         json: {
             "username" : username,
-            "balance" : "0"
+            "amount" : "0"
         }
       };
       
@@ -107,7 +107,7 @@ exports.deductAmount = function deductAmount(url, greater, amount, session, call
             'Content-Type':'application/json'
         },
         json: {
-            "balance" : greater
+            "amount" : greater
         }
       };
       
@@ -124,7 +124,33 @@ exports.deductAmount = function deductAmount(url, greater, amount, session, call
       });
 };
 
-exports.AddCheck = function sendData(url, session, amount, callback){
+exports.addAmount = function addAmount(url, greater, amount, session, callback){
+    var options = {
+        url: url,
+        method: 'PATCH',
+        headers: {
+            'ZUMO-API-VERSION': '2.0.0',
+            'Content-Type':'application/json'
+        },
+        json: {
+            "amount" : greater
+        }
+      };
+      
+      request(options, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            console.log(body);
+            // console.log("lol");
+            // console.log("amount from deductAmount: %s" , amount);
+            callback(body, session, amount);
+        }
+        else{
+            console.log(error);
+        }
+      });
+};
+
+exports.withdraw = function sendData(url, session, amount, callback){
     var options = {
         url: url,
         method: 'POST',
@@ -153,3 +179,45 @@ exports.AddCheck = function sendData(url, session, amount, callback){
         }
       });
 };
+
+//deposit
+exports.deposit = function sendData(url, amount, session, callback){
+    var options = {
+        url: url,
+        method: 'PATCH',
+        headers: {
+            'ZUMO-API-VERSION': '2.0.0',
+            'Content-Type':'application/json'
+        },
+        json: {
+            "amount" : amount
+        }
+      };
+      
+      request(options, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            console.log(body);
+            callback(body, session, greater, SNExist);
+        }
+        else{
+            console.log(error);
+        }
+      });
+};
+
+//currency 
+
+exports.getCurrencyData = function getData(url, session,base,currency,callback){
+    
+        request.get(url, function processGetRequest(err,res,body){
+            if(err){
+                console.log(err);
+            }else {
+
+                callback(body,session,base,currency)
+
+                
+            }
+        });
+    };
+ 

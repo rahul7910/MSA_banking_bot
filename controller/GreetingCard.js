@@ -19,7 +19,7 @@ exports.displayStarterHelp = function getHelpData2(session){
         .buttons([
             builder.CardAction.imBack(session, sendCall, 'Login'),
             builder.CardAction.imBack(session, sendCall1, 'Create Account'),
-            builder.CardAction.imBack(session, sendCall2, 'Check Exchange Rate')
+            builder.CardAction.imBack(session, sendCall2, 'Check Currency Rate')
         ]);
     attachment.push(card);      
     //Displays restaurant hero card carousel in chat box 
