@@ -206,7 +206,6 @@ exports.deposit = function sendData(url, amount, session, callback){
 };
 
 //currency 
-
 exports.getCurrencyData = function getData(url, session,base,currency,callback){
     
         request.get(url, function processGetRequest(err,res,body){

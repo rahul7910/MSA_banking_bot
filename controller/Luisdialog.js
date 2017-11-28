@@ -8,18 +8,27 @@ var currency = require("./CurrencyRate");
 
 exports.startDialog = function (bot) {
     // Replace {YOUR_APP_ID_HERE} and {YOUR_KEY_HERE} with your LUIS app ID and your LUIS key, respectively.
-    var recognizer = new builder.LuisRecognizer('  	https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q= ');
+    var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q=');
     
     bot.recognizer(recognizer);
-
-    //global variables here
+//global variables 
+    var n=0;
+    var current=0;
+  
+    /*
+    bot.dialog('closeServices', function(session, args) { 
+        session.send("Hi Rahul!");
+    }).triggerAction({
+        matches: 'closeServices'
+    });
+*/
 
     bot.dialog('WelcomeIntent', 
         function (session, args, next) {
             session.dialogData.args = args || {};        
             if (!session.conversationData["username"]) {
                 // session.send("Hello !!");
-                GreetingCardBuilder.displayStarterHelp(session);  // <---- THIS LINE HERE IS WHAT WE NEED 
+                GreetingCardBuilder.displayStarterCard(session);  // <---- THIS LINE HERE IS WHAT WE NEED 
                    
             } else {
                 next(); // Skip if we already have this info.
@@ -31,7 +40,7 @@ exports.startDialog = function (bot) {
                 }
                 
                 // session.send("Hello %s!!", session.conversationData["username"]);
-                GreetingCardBuilder.displayHelperCards(session, session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
+                GreetingCardBuilder.displayCards(session, session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
             
         }
     ).triggerAction({
@@ -54,7 +63,7 @@ exports.startDialog = function (bot) {
                 }
                 
                 // session.send("Hello %s!!", session.conversationData["username"]);
-                account.NewLogin(session, session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
+                account.NewLogin(session, session.conversationData["username"]);   
             
         }
     ]).triggerAction({
@@ -67,7 +76,9 @@ exports.startDialog = function (bot) {
             session.dialogData.args = args || {};        
             if (session.conversationData["username"]) {
                 session.send("Logging Off...");
+                //end the conversation in order to log off ? 
                 session.endConversation();
+                //session is over , can notify the user now 
                 session.send("Successfully logged off!");  
             } else {
                 next(); // Skip if we already have this info.
@@ -76,7 +87,8 @@ exports.startDialog = function (bot) {
         function (session, results,next) {
                 
                 session.send("No login is made before!!");
-                GreetingCardBuilder.displayStarterHelp(session);  // <---- THIS LINE HERE IS WHAT WE NEED 
+                //provide option for user to login again or choose another option 
+                GreetingCardBuilder.displayStarterCard(session);  
             
         }
     ]).triggerAction({
@@ -237,7 +249,7 @@ exports.startDialog = function (bot) {
             }else{
                 
                         session.dialogData.args = args || {};
-                        builder.Prompts.text(session, "Enter currency in format of 3 letters e.g. (NZD) ");
+                        builder.Prompts.text(session, "Enter currency in format of 3 capital letters e.g. (NZD) ");
                         
                     }
                 },
@@ -254,12 +266,24 @@ exports.startDialog = function (bot) {
                         if (checkcurrency(results.response)){
                             session.conversationData["currency"] = results.response;
                             currency.displayCurrencyCards(session, session.conversationData["base"] ,session.conversationData["currency"])
-                
-                
+                            //ask user if they want to continue after finding out the exchange rate 
+                                setTimeout(function()
+                                {
+                                    if(n===current)
+                                    {
+                                        session.send("Anything else you would like to do?"); 
+                                        GreetingCardBuilder.displayStarterCard(session);
+                                        // session.send(n);
+                                        //session.endConversation('Ending conversation since you\'ve been inactive too long. Hope to see you soon.');
+                                    }
+                            
+                                }, 3000);
+                                
+                            
                         }else{
                             //if wrong input then retry (currency should be ==3)
                             session.send("The currency format entered is not right, please try again!");
-                            GreetingCardBuilder.displayStarterHelp(session);
+                            GreetingCardBuilder.displayStarterCard(session);
                         }
                     }
                 
@@ -267,10 +291,45 @@ exports.startDialog = function (bot) {
                     matches: 'Currency'
                     });
     
+
+              bot.dialog('Image', [
+                        function isAttachment(session) {
+                            //session.send("Please paste a url of a currency photo or upload an image.") 
+                            var msg = session.message.text;
+                            if ((session.message.attachments && session.message.attachments.length > 0) || msg.includes("http")) {
+                                //session.send("Please paste a url of a currency photo or upload an image.") 
+                                
+                                //call custom vision
+                                 customVision.retreiveMessage(session);
+                                 return true;
+                            }else {
+                                    //session.send("Please paste a url of a currency you want to be identifed or you can simply upload an image!");
+                                    
+                                    session.send("Please paste a url of a currency photo or upload an image.") 
+                                    setTimeout(function()
+                                    {
+                                        if(n===current)
+                                        {
+                                            session.send("Anything else you would like to do?"); 
+                                            GreetingCardBuilder.displayStarterCard(session);
+                                            // session.send(n);
+                                            //session.endConversation('Ending conversation since you\'ve been inactive too long. Hope to see you soon.');
+                                        }
+                                
+                                    }, 14000);
+                                    //return false 
+                                    //something goes wrong 
+                                    //GreetingCardBuilder.displayStarterCard(session);
+                                }
+                        }
+                    ]).triggerAction({
+                        matches: 'Image'
+                    });
+                    
     
     }
     
-
+/*
     function checkdate(response) {
         if (response.length !==10){
             return false;
@@ -281,7 +340,7 @@ exports.startDialog = function (bot) {
         }
     
     }
-    
+  */  
     function checkcurrency(response){
         if(response.length!==3){
             return false
@@ -289,18 +348,23 @@ exports.startDialog = function (bot) {
             return true;
         }
     }
-    
-    
-    function isAttachment(session) { 
-        var msg = session.message.text;
-        if ((session.message.attachments && session.message.attachments.length > 0) || msg.includes("http")) {
-            //call custom vision
-            // customVision.retreiveMessage(session);
-    
-            return true;
+    /*
+    bot.dialog('Currency Image', [
+        function isAttachment(session) { 
+            var msg = session.message.text;
+            if ((session.message.attachments && session.message.attachments.length > 0) || msg.includes("http")) {
+                //call custom vision
+                 customVision.retreiveMessage(session);
+        
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-        else {
-            return false;
-        }
-    }
+    ]).triggerAction({
+        matches: 'Currency Image'
+    });
+*/
+
 

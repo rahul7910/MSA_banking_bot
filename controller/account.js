@@ -47,7 +47,7 @@ function enoughBalance(message, amount, session, username) {
             rest.deductAmount(urlAccounts, greater, amount, session);
         } else {
             session.send("Don't have enough money to withdraw, please check your balance!");
-            GreetingCardBuilder.displayHelperCards(session, username);  
+            GreetingCardBuilder.displayCards(session, username);  
         }
     }          
     
@@ -97,7 +97,7 @@ function depositBalance(message, amount, session, username) {
             rest.addAmount(urlAccounts, greater, amount, session);
         } else {
             session.send("Please enter a valid number to deposit");
-            GreetingCardBuilder.displayHelperCards(session, username);  
+            GreetingCardBuilder.displayCards(session, username);  
         }
     }          
     
@@ -148,7 +148,7 @@ function handleBalanceResponse(message, session, username) {
         
     } else {// Print all favourite foods for the user that is currently logged in
         session.send("%s, your current balance is: NZD %s", usernameReceived, balanceGot);
-        GreetingCardBuilder.displayHelperCards(session, username);    
+        GreetingCardBuilder.displayCards(session, username);    
     }          
     
 }
@@ -173,7 +173,7 @@ function handleUndefinedUser(message,session,username) {
         session.send("Username does not exist in the server! Please check username!");
         session.endConversation();
     } else {
-        GreetingCardBuilder.displayHelperCards(session, username);  // <---- THIS LINE HERE IS WHAT WE NEED 
+        GreetingCardBuilder.displayCards(session, username);  // <---- THIS LINE HERE IS WHAT WE NEED 
     }
 }
 
@@ -196,7 +196,7 @@ function handleExistance(message,session,username) {
         rest.AddAccount(url, username);
         // session.send("welcome %s", username);
         session.send("Congrats! You have just created a new account with Contoso Bank!");
-        GreetingCardBuilder.displayHelperCards(session,username);
+        GreetingCardBuilder.displayCards(session,username);
     } else {
         session.send("Username already exist in the server! Use other username!");
         session.endConversation();

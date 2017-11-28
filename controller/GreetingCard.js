@@ -3,23 +3,27 @@ var builder = require('botbuilder');
 
 
 
-exports.displayHelperCards = function getHelpData(session, username){
+exports.displayCards = function getHelpData(session, username){
     var url = 'http://contosobb.azurewebsites.net/tables/accounts';
     rest.getHelpData(url, session,username, helpUser);
 }
 
 
-exports.displayStarterHelp = function getHelpData2(session){
+exports.displayStarterCard = function getHelpData2(session){
     var attachment = [];
     var sendCall = 'login';
     var sendCall1 = 'create account';
-    var sendCall2 = 'exchange rate';
+    var sendCall2 = 'delete account';
+    var sendCall3 = 'Check Currency Rate';
+    var sendCall4 = 'Image to text';
     var card = new builder.HeroCard(session)
-        .title('Hello! How can I help you?')
+        .title('Hello! How can I help?')
         .buttons([
-            builder.CardAction.imBack(session, sendCall, 'Login'),
+            builder.CardAction.imBack(session, sendCall,  'Login'),
             builder.CardAction.imBack(session, sendCall1, 'Create Account'),
-            builder.CardAction.imBack(session, sendCall2, 'Check Currency Rate')
+            builder.CardAction.imBack(session, sendCall2, 'Delete Account'),
+            builder.CardAction.imBack(session, sendCall3, 'Check Currency Rate'), 
+            builder.CardAction.imBack(session, sendCall4, 'Currency Image to text'),
         ]);
     attachment.push(card);      
     //Displays restaurant hero card carousel in chat box 

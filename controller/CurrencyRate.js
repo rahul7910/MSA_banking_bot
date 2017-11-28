@@ -2,9 +2,9 @@
 var builder = require('botbuilder');
 
 
-//Calls 'getNutritionData' in RestClient.js with 'getFoodNutrition' as callback to get ndbno of food
 exports.displayCurrencyCards = function getCurrencyData(session,base, currency){
-    var url = "https://api.fixer.io/latest?base="+base.toUpperCase();//change the api key 
+    //http://fixer.io/ provides latest updates for currency 
+    var url = "https://api.fixer.io/latest?base="+base.toUpperCase();
 
     rest.getCurrencyData(url, session,base,currency,displayCards);
 }
@@ -13,13 +13,12 @@ exports.displayCurrencyCards = function getCurrencyData(session,base, currency){
 
         var allcurrency = JSON.parse(message);
         var allrate = allcurrency.rates;
-        var date = allcurrency.date;
+        //var date = allcurrency.date;
         var rate = [];
         for (var index in allrate){
-            console.log(index);
+           //check for correct format in currency 
             if (index.toUpperCase() === currency.toUpperCase()){
-                console.log("!!!!!!!!!!!!!!!!!!!!!");
-                console.log(allrate[index]);
+                //push onto array 
                 rate.push(allrate[index]);
                 }      
             }
@@ -57,8 +56,8 @@ exports.displayCurrencyCards = function getCurrencyData(session,base, currency){
                                         "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": "date:" + date,
-                                                "size": "small",
+                                                //"text": "date:" + date,
+                                                "size": "medium",
                                                 "weight": "bolder",
                                             }
                                         ]
