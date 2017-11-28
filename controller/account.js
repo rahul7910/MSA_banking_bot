@@ -1,123 +1,171 @@
 var rest = require('../API/Restclient');
 var builder = require('botbuilder');
-/*
-var rest = require('../API/Restclient');
+var GreetingCardBuilder = require('./GreetingCard');
 
-exports.displayFavouriteFood = function getFavouriteFood(session, username){
-    var url = 'https://foodbotmsa.azurewebsites.net/tables/FoodBot';
-    rest.getFavouriteFood(url, session, username, handleFavouriteFoodResponse)
-};
-*/
-
-
-//dealing with login of accounts 
-exports.attemptLogin = function lookForUser(session, username, password){
-    var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
-    rest.lookForUser(url,session, username, password, handleUserLookupResponse);
+// add check
+exports.addCheck = function addCheck(session, username, amount) {
+    var urlAccounts = 'http://contosobb.azurewebsites.net/tables/accounts';
+    rest.getBalance2(urlAccounts, amount, session, username, enoughBalance);
 }
-
-exports.reccordNewLogin = function postNewLogin(session, username){
-    var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
-    rest.postNewLogin(url,session, username);
-}
-
-//dealing with account display and creation ------------------------------------------------
-exports.displayAccount = function getAccount(session, username, password){
-    var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    rest.getAccount(url, session, username, password, handleGetAccountResponse)
-};
-
-//do i need to add password paramter here ? 
-exports.createNewAccount = function postAccount(session, username, password){
-    var url = 'http://contosobb.azurewebsites.net/tables/ContosoBB';
-    rest.postAccount(url,username,password);
-    session.send("Congrats! You have just created a new account with Contoso Bank!");
-};
-
-
-//------------------------------------------------------------------------------------------
-
-function handleUserLookupResponse(message,session,username,password){
-    var loginLookupResponse = JSON.parse(message);
-
-    var foundUser = false;
-
-    for (var i in loginLookupResponse){
-        if (username == loginLookupResponse[i].username){
-            if(password == loginLookupResponse[i].password){
-                foundUser = true;
-            }
+function enoughBalance(message, amount, session, username) {
+    var handleBalanceResponse = JSON.parse(message);
+    var balanceGot;
+    var balance = parseFloat(0).toFixed(2);
+    var idExist;
+    for (var index in handleBalanceResponse) {
+        var usernameReceived = handleBalanceResponse[index].username;
+        var subBalance = parseFloat(handleBalanceResponse[index].balance);
+        if (username.toLowerCase()===usernameReceived.toLowerCase()) {
+            balanceGot = subBalance.toFixed(2);
+            idExist = handleBalanceResponse[index].id;;
+            break;
         }
     }
-
-    if (foundUser){
-        // Post the new login to the records table
-        var url = "http://contosobb.azurewebsites.net/tables/ContosoBB";
-        rest.postNewLogin(url,session, username);
-
-        session.send("%s, you have successfully logged in. How can I help?",username);
-
+    if (idExist === null || idExist === undefined) {
+        session.send("No matching username found!")
+        session.send("Type 'Login' to login again!");
+        session.endConversation();
+        
     } else {
-        session.send("Username or password incorrect, please try again");
-        //session.send("Account Query");
-    }    
-}
-
-function handleGetAccountResponse(message, session, username) {
-    var getAccountResponse = JSON.parse(message);
-    var allAccounts = [];
-    for (var index in getAccountResponse) {
-        var account = {};
-        account.value = getAccountResponse[index].balance;
-        allAccounts.push(account);      
-    }
-
-
-    // Print all accounts for the user that is currently logged in
-    session.send(new builder.Message(session).addAttachment({
-        contentType: "application/vnd.microsoft.card.adaptive",
-        content: {
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "type": "AdaptiveCard",
-            "version": "0.5",
-            "body": [
-                {
-                    "type": "Container",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Account Owner: " + username,
-                            "size": "large"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "Account Information"
-                        }
-                    ]
-                },
-                {
-                    "type": "Container",
-                    "spacing": "none",
-                    "items": [
-                        {
-                            "type": "ColumnSet",
-                            "columns": [
-                                {
-                                    "type": "Column",
-                                    "width": "auto",
-                                    "items": [
-                                        {
-                                            "type": "FactSet",
-                                            "facts": allAccounts
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+        amount = parseFloat(amount);
+        amount = amount.toFixed(2);;
+        var greater = +balanceGot - +amount;
+        greater.toFixed(2);
+        console.log(greater);
+        if (greater >= 0.00) {
+            //var urlCheckTable = 'http://contosobb.azurewebsites.net/tables/checks';
+            var urlAccounts = 'http://contosobb.azurewebsites.net/tables/accounts' + idExist;
+            
+            rest.deductAmount(urlAccounts, greater, amount, session, beforeIDHolder);
+        } else {
+            session.send("Not enough money in the account! Session terminated.");
+            session.endConversation();
         }
-    }));              
+    }          
     
 }
+
+function idHolder(message, session) {
+    console.log("========id1 is %s", message.id);
+    session.send("Serial Number:  %s" , message.id);
+    session.send("Withdrawal Amount:  $ %s" , message.amount);
+    session.send("Withdrawal Completed! Please save Serial Number provided to use check issued.");
+    session.endConversation();
+}
+
+
+
+// GetBalance
+exports.displayBalance = function getBalance(session, username){
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    rest.getBalance(url, session, username, handleBalanceResponse)
+};
+function handleBalanceResponse(message, session, username) {
+    var handleBalanceResponse = JSON.parse(message);
+    var balanceGot;
+    var balance = parseFloat(0).toFixed(2);
+    var idExist;
+    for (var index in handleBalanceResponse) {
+        var usernameReceived = handleBalanceResponse[index].username;
+        var subBalance = parseFloat(handleBalanceResponse[index].balance);
+        // balance = +balance + +subBalance.toFixed(2);
+        if (username.toLowerCase()===usernameReceived.toLowerCase()) {
+            balanceGot = subBalance.toFixed(2);
+            idExist = handleBalanceResponse[index].id;;
+            break;
+        }
+    }
+    if (idExist === null || idExist === undefined) {
+        session.send("There is no matching Username in the system!");
+        session.send("Please try again after creating account!");
+        session.endConversation();
+        
+    } else {// Print all favourite foods for the user that is currently logged in
+        session.send("%s, your current balance is: NZD %s", usernameReceived, balanceGot);
+        GreetingCardBuilder.displayHelperCards(session, username);    
+    }          
+    
+}
+
+
+// handle login
+exports.NewLogin = function NewLogin(session, username){
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    rest.NewLogin(url, session, username, handleUndefinedUser)
+};
+function handleUndefinedUser(message,session,username) {
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var handleExistance = JSON.parse(message);
+    var idExist;
+    for (var index in handleExistance) {
+        var usernameReceived = handleExistance[index].username;
+        if (username.toLowerCase() ===usernameReceived.toLowerCase()) {
+            idExist = handleExistance[index].id;
+        }
+    }
+    if (idExist === null || idExist === undefined) {
+        session.send("Username does not exist in the server! Please check username!");
+        session.endConversation();
+    } else {
+        GreetingCardBuilder.displayHelperCards(session, username);  // <---- THIS LINE HERE IS WHAT WE NEED 
+    }
+}
+
+// add new user
+exports.AddAccount = function AddAccount(session, username){
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    rest.userExist(url,session,username,handleExistance);
+};
+function handleExistance(message,session,username) {
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var handleExistance = JSON.parse(message);
+    var idExist;
+    for (var index in handleExistance) {
+        var usernameReceived = handleExistance[index].username;
+        if (username.toLowerCase() ===usernameReceived.toLowerCase()) {
+            idExist = handleExistance[index].id;
+        }
+    }
+    if (idExist === null || idExist === undefined) {
+        rest.AddAccount(url, username);
+        // session.send("welcome %s", username);
+        session.send("Congrats! You have just created a new account with Contoso Bank!");
+        GreetingCardBuilder.displayHelperCards(session,username);
+    } else {
+        session.send("Username already exist in the server! Use other username!");
+        session.endConversation();
+    }
+}
+
+
+//delete user
+exports.deleteUser = function deleteUser(session, username){
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    rest.userExist(url,session,username,handleUserForDelete);
+};
+
+function handleUserForDelete(message,session,username) {
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var handleExistance = JSON.parse(message);
+    var idExist;
+    for (var index in handleExistance) {
+        var usernameReceived = handleExistance[index].username;
+        if (username.toLowerCase() ===usernameReceived.toLowerCase()) {
+            idExist = handleExistance[index].id;
+        }
+    }
+    rest.deleteUser(url,session,idExist, handleDeletedUserResponse);
+}
+
+function handleDeletedUserResponse(body, session) {
+    session.endConversation();
+    console.log('Done');
+}
+
+
+
+
+
+
+
+

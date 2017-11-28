@@ -1,260 +1,233 @@
 var builder = require('botbuilder');
-var loginData = require("./account");
-var deposit = require("./Deposit");
-//var conversion = require("./conversion");
+var customVision = require('./CustomVision');
 var GreetingCardBuilder = require('./GreetingCard');
+var account = require('./account');
+
+
 
 exports.startDialog = function (bot) {
+    // Replace {YOUR_APP_ID_HERE} and {YOUR_KEY_HERE} with your LUIS app ID and your LUIS key, respectively.
+    var recognizer = new builder.LuisRecognizer(' https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q= ');
     
-    var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q=');
-
     bot.recognizer(recognizer);
 
-//welcome message here
+    //global variables here
 
-    bot.dialog('WelcomeIntent', function (session, args) {
-        
-        GreetingCardBuilder.displayGreetingCard(session);
-
-    }).triggerAction({
+    bot.dialog('WelcomeIntent', 
+        function (session, args, next) {
+            session.dialogData.args = args || {};        
+            if (!session.conversationData["username"]) {
+                // session.send("Hello !!");
+                GreetingCardBuilder.displayStarterHelp(session);  // <---- THIS LINE HERE IS WHAT WE NEED 
+                   
+            } else {
+                next(); // Skip if we already have this info.
+            }
+        },
+        function (session, results,next) {
+                if (results.response) {
+                    session.conversationData["username"] = results.response;
+                }
+                
+                // session.send("Hello %s!!", session.conversationData["username"]);
+                GreetingCardBuilder.displayHelperCards(session, session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
+            
+        }
+    ).triggerAction({
         matches: 'WelcomeIntent'
     });
-/*
-    bot.dialog('CreateAccount', [
+
+
+    bot.dialog('Login', [
         function (session, args, next) {
             session.dialogData.args = args || {};        
             if (!session.conversationData["username"]) {
-                builder.Prompts.text(session, "Enter a username to setup your account.");                
-            } else {
-                next(); // Skip if we already have this info.
-            }
-        },
-        function (session, results, next) {
-            //if (!isAttachment(session)) {
-
-                if (results.response) {
-                    session.conversationData["username"] = results.response;
-                }
-                // LUIS is playing up 
-                var bankingEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'account');
-
-               // if (bankingEntity) {
-                    session.send('Creating your new account ');
-                    account.createNewAccount(session, session.conversationData["username"]);
-                    account.displayAccount(session, session.conversationData["username"])
-                //} else {
-                //    session.send("Please Try again");
-               // }
-            //}
-        }
-    ]).triggerAction({
-        matches: 'CreateAccount'
-    });
-*/
-
-bot.dialog('CreateAccount', [
-    function (session, args, next) {
-            builder.Prompts.text(session, "Please enter the username to your account:");  
-    },
-    function (session, results, args, next) {
-
-        if (results.response){
-            session.conversationData["username"] = results.response;
-        }
-            builder.Prompts.text(session, "Enter the password for your account:");     
-    },
-    function (session, results,next) {
-        if (results.response){
-            session.conversationData["password"] = results.response;
-        }
-
-        loginData.createNewAccount(session,session.conversationData["username"],session.conversationData["password"]);
-     }]
-    
-    ).triggerAction({
-        matches: 'CreateAccount'
-    });
-    
-    bot.dialog('getAccount', [
-        function (session, args, next) {
-                builder.Prompts.text(session, "Please enter the username to login");  
-        },
-        function (session, results, args, next) {
-    
-            if (results.response){
-                session.conversationData["username"] = results.response;
-            }
-                builder.Prompts.text(session, "Enter the password for your account:");     
-        },
-        function (session, results,next) {
-            if (results.response){
-                session.conversationData["password"] = results.response;
-            }
-    
-            loginData.attemptLogin(session,session.conversationData["username"],session.conversationData["password"]);
-         //   loginData.attemptLogin(session,session.conversationData["username"],session.conversationData["password"]);
-         }]
-        
-        ).triggerAction({
-            matches: 'getAccount'
-        });
-    
-/*
-    bot.dialog('CreateAccount', [
-        function (session, args, next) {
-            if (!session.conversationData["username"]) {
-                builder.Prompts.text(session, "Enter the username to the account:");           
+                builder.Prompts.text(session, "Enter a username to setup your account.");        
             } else {
                 next(); // Skip if we already have this info.
             }
         },
         function (session, results,next) {
+                if (results.response) {
+                    session.conversationData["username"] = results.response;
+                }
+                
+                // session.send("Hello %s!!", session.conversationData["username"]);
+                account.NewLogin(session, session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
             
-            if (results.response){
-                session.conversationData["username"] = results.response;
-            }
-            var bankingEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'account');
-            
-            if (bankingEntity) {
-                session.send('Creating your new account ');
-                account.createNewAccount(session,session.conversationData["username"]);
-            }
-        }]
-    
-    ).triggerAction({
-        matches: 'CreateAccount'
+        }
+    ]).triggerAction({
+        matches: 'Login'
     });
-*/
-    bot.dialog('MakeDeposit', [
+
+    //logout function 
+    bot.dialog('Logout', [
         function (session, args, next) {
             session.dialogData.args = args || {};        
-            if (!session.conversationData["username"]) {
-                builder.Prompts.text(session, "Enter a username to setup your account.");                
+            if (session.conversationData["username"]) {
+                session.send("Logging Off...");
+                session.endConversation();
+                session.send("Successfully logged off!");  
             } else {
                 next(); // Skip if we already have this info.
             }
         },
-        function (session, results, next) {
-            //if (!isAttachment(session)) {
-
-                if (results.response) {
-                    session.conversationData["username"] = results.response;
-                }
-
-                var bankingEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'banking');
-                var balanceEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'balance');
-
-                if (bankingEntity && balanceEntity) {
-                    session.send('Making a deposit of '+ balanceEntity.entity + ' ' + bankingEntity.entity + ' for you...');
-                    deposit.makeDeposit(session, session.conversationData["username"], bankingEntity.entity,  balanceEntity.entity);
-                    session.send("Transaction done!");       
-                } else {
-                    session.send("I didn't get that! Try in format: Deposit 500 nzd");
-                }
-            //}
+        function (session, results,next) {
+                
+                session.send("No login is made before!!");
+                GreetingCardBuilder.displayStarterHelp(session);  // <---- THIS LINE HERE IS WHAT WE NEED 
+            
         }
     ]).triggerAction({
-        matches: 'MakeDeposit'
+        matches: 'Logout'
     });
-/*
-    bot.dialog('GetAccount', [
+
+//Check bank balance 
+
+    bot.dialog('BankBalance', [
         function (session, args, next) {
             session.dialogData.args = args || {};        
             if (!session.conversationData["username"]) {
-                builder.Prompts.text(session, "Enter a username to setup your account.");                
+                builder.Prompts.text(session, "Enter a username to log in to your account.");        
             } else {
                 next(); // Skip if we already have this info.
             }
         },
-        function (session, results, next) {
-            //if (!isAttachment(session)) {
-
+        function (session, results,next) {
                 if (results.response) {
                     session.conversationData["username"] = results.response;
                 }
-
-                session.send("Retrieving your accounts...");
-                account.displayAccount(session, session.conversationData["username"]);
-            //}
+                
+                
+                account.displayBalance(session, session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
+            
         }
     ]).triggerAction({
-        matches: 'GetAccount'
+        matches: 'BankBalance'
     });
-*/
 
+//createAccount
+    bot.dialog('CreateAccount', [
+        function (session, args, next) {
+            session.dialogData.args = args || {};        
+            if (!session.conversationData["username"]) {
+                builder.Prompts.text(session, "Enter a username to create your account.");        
+            } else {
+                next(); // Skip if we already have this info.
+            }
+        },
+        function (session, results,next) {
+                if (results.response) {
+                    session.conversationData["username"] = results.response;
+                }
+                
+                // session.send("Hello %s!! Checking your balnce. Please Wait!", session.conversationData["username"]);
+                account.AddAccount(session, session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
+            
+        }
+    ]).triggerAction({
+       // matches: 'BankAddAcc'
+       matches: 'CreateAccount'
+    });
+
+    //DeleteAccount
     bot.dialog('DeleteAccount', [
         function (session, args, next) {
+            if(!isAttachment(session)){
             session.dialogData.args = args || {};
             if (!session.conversationData["username"]) {
-                builder.Prompts.text(session, "Enter a username to setup your account.");
+                builder.Prompts.text(session, "Enter a username to log in to your account first.");
             } else {
                 next(); // Skip if we already have this info.
             }
-        },
+        }},
         function (session, results,next) {
-            //if (!isAttachment(session)) {
+            if(!isAttachment(session)){
+            //Add this code in otherwise your username will not work.
+            if (results.response) {
+                session.conversationData["username"] = results.response;
+            }
 
-                session.send("You want to delete one of your accounts.");
-
-                var bankingEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'banking');
-
-                if (bankingEntity) {
-                    session.send('Deleting \'%s\' account...', bankingEntity.entity);
-                    loginData.deleteAccount(session,session.conversationData['username'],bankingEntity.entity); //<--- CALLL WE WANT
-                } else {
-                    session.send("No account identified! Try: Remove aud account!");
-                }
-            //}
+            session.send("You want to delete this account.");
+            
+            session.send('Deleting \'%s\'...', session.conversationData["username"]);
+            account.deleteUser(session, session.conversationData["username"]); //<--- CALLL WE WANT
         }
+    }
     ]).triggerAction({
         matches: 'DeleteAccount'
     });
-    /*
-    
-    bot.dialog('LookForRate', [
-        function (session, args) {
-            //if (!isAttachment(session)) {
-                var bankingEntities = builder.EntityRecognizer.findAllEntities(args.intent.entities, 'banking');
 
-                if (bankingEntities.length === 2) {
-                    session.send('Looking for conversion rate from \'%s\' to \'%s\'...', bankingEntities[0].entity, bankingEntities[1].entity);
-                    conversion.displayConversionRate(bankingEntities, session);
-
-    
-                } else {
-                    session.send("No banking or only 1 is identified! Try: nzd to usd");
-                }
-            //}
-        }
-    ]).triggerAction({
-        matches: 'LookForRate'
-    });
-    
-    bot.dialog('Convert', [
+    //withdraw function
+    bot.dialog('Withdraw', [
         function (session, args, next) {
-            session.dialogData.args = args || {};
+            session.dialogData.args = args || {};        
             if (!session.conversationData["username"]) {
-                builder.Prompts.text(session, "Enter a username to setup your account.");
+                builder.Prompts.text(session, "Enter a username to setup your account.");        
             } else {
                 next(); // Skip if we already have this info.
             }
         },
         function (session, results,next) {
-            //if (!isAttachment(session)) {
-
-                var bankingEntities = builder.EntityRecognizer.findAllEntities(session.dialogData.args.intent.entities, 'banking');
-                var balanceEntity = builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'balance');
-
-                if (bankingEntities.length === 2) {
-                    session.send('Converting \'%s\' \'%s\' to \'%s\'...', balanceEntity.entity, bankingEntities[0].entity, bankingEntities[1].entity);
-                    conversion.exchangebanking(bankingEntities, balanceEntity.entity, session);
-                } else {
-                    session.send("I did not get that! Try: Convert 1000 aud to sgd!");
-                }
-            //}
+            if (results.response) {
+                session.conversationData["username"] = results.response;
+            }
+            if (!session.conversationData["amount"]) {
+                builder.Prompts.text(session, "Enter an amount you want to withdraw.");
+            } else {
+                next();
+            }
+        },
+        function (session,results,next) {
+            if (results.response) {
+                session.conversationData["amount"] = results.response;
+            }
+            // session.send("Hello %s!!", session.conversationData["username"]);
+            account.addCheck(session, session.conversationData["username"], session.conversationData["amount"]);  // <---- THIS LINE HERE IS WHAT WE NEED 
+    
         }
+                
+        
     ]).triggerAction({
-        matches: 'Convert'
+        matches: 'Withdraw'
     });
-    */
+
+    //need to add a deposit function 
+    
+    
+    // bot.dialog('Currency', [
+    //     function(session,args,next) {
+    //     exRate = builder.EntityRecognizer.findEntity(args.intent.entities, 'food');
+    //     session.conversationData["lookingFor"] = exRate;
+    //     builder.Prompts.text(session, 'You are looking for the exchange rate of '+ exRate.entity.toUpperCase() +' based on...');
+    //     next();
+    //     },
+    //     function(session, results, next) {
+    //         var lookingFor = results.response.toUpperCase();
+    //         console.log(exRate.entity);
+    //         console.log(results.response);
+    //         var url = 'https://api.fixer.io/latest?base=' + exRate.entity;
+    //         session.send("Retreiving exchange rate...");
+    //         nutrition.displayExRate(url,session);
+
+    //     }
+    // ]).triggerAction({
+    //     matches: 'Currency'
+    // });
+
+
+    
+    function isAttachment(session) { 
+        var msg = session.message.text;
+        if ((session.message.attachments && session.message.attachments.length > 0) || msg.includes("http")) {
+            //call custom vision
+            // customVision.retreiveMessage(session);
+    
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 }

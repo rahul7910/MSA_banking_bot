@@ -1,28 +1,54 @@
-
+var rest = require('../API/Restclient');
 var builder = require('botbuilder');
-var luis = require("./Luisdialog");
 
-exports.displayGreetingCard = function displayGreetingCard(session){
+
+
+exports.displayHelperCards = function getHelpData(session, username){
+    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    rest.getHelpData(url, session,username, helpUser);
+}
+
+
+exports.displayStarterHelp = function getHelpData2(session){
     var attachment = [];
-    //button array 
-    var cardButtons = [];
-
-    //https://docs.microsoft.com/en-us/bot-framework/dotnet/bot-builder-dotnet-add-rich-card-attachments 
-
+    var sendCall = 'login';
+    var sendCall1 = 'create account';
+    var sendCall2 = 'exchange rate';
     var card = new builder.HeroCard(session)
-        .title("Welcome to the Bank of Contoso!")
-        .text("What would you like to do today?")
+        .title('Hello! How can I help you?')
         .buttons([
-            builder.CardAction.imBack(session,"Create Account","Create account"),
-            builder.CardAction.imBack(session,"Login","Login"),
-            //try add these when you logged in 
-            //builder.CardAction.imBack(session,"Withdraw","Withdraw"),
-            //builder.CardAction.imBack(session, "Deposit","Deposit")
+            builder.CardAction.imBack(session, sendCall, 'Login'),
+            builder.CardAction.imBack(session, sendCall1, 'Create Account'),
+            builder.CardAction.imBack(session, sendCall2, 'Check Exchange Rate')
         ]);
-        //push to array and show in bot 
-    attachment.push(card);
+    attachment.push(card);      
+    //Displays restaurant hero card carousel in chat box 
+    var message = new builder.Message(session)
+    .attachmentLayout(builder.AttachmentLayout.carousel)
+    .attachments(attachment);
+    session.send(message);
+}
 
-    var message = new builder.Message(session).attachments(attachment);
-    //display in bot 
+
+function helpUser(message, session, username) {
+    var attachment = [];
+    var restaurants = JSON.parse(message);
+    var sendCall = 'balance';
+    var sendCall1 = 'deposit';
+    var sendCall2 = 'withdraw';
+    var sendCall3 = 'logout';
+    var card = new builder.HeroCard(session)
+        .title('Hello, %s! How can I help you?', username)
+        .buttons([
+            builder.CardAction.imBack(session, sendCall, 'Check Balance'),
+            builder.CardAction.imBack(session, sendCall1, 'Deposit'),
+            builder.CardAction.imBack(session, sendCall2, 'Withdraw'),
+            builder.CardAction.imBack(session, sendCall3, 'Logout')
+        ]);
+    attachment.push(card);      
+    //Displays restaurant hero card carousel in chat box 
+    var message = new builder.Message(session)
+    .attachmentLayout(builder.AttachmentLayout.carousel)
+    .attachments(attachment);
     session.send(message);
 }
