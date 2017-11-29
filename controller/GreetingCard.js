@@ -5,7 +5,7 @@ var builder = require('botbuilder');
 
 exports.displayCards = function getHelpData(session, username){
     var url = 'http://contosobb.azurewebsites.net/tables/accounts';
-    rest.getHelpData(url, session,username, helpUser);
+    rest.getHelpData(url, session,username, userOptions);
 }
 
 
@@ -34,7 +34,7 @@ exports.displayStarterCard = function getHelpData2(session){
 }
 
 
-function helpUser(message, session, username) {
+function userOptions(message, session, username) {
     var attachment = [];
     var restaurants = JSON.parse(message);
     var sendCall = 'balance';

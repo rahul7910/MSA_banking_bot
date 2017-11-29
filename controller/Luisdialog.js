@@ -2,7 +2,7 @@ var builder = require('botbuilder');
 var customVision = require('./CustomVision');
 var GreetingCardBuilder = require('./GreetingCard');
 var account = require('./account');
-var currency = require("./CurrencyRate");
+var currency = require("./conversion");
 
 
 
@@ -52,7 +52,7 @@ exports.startDialog = function (bot) {
         function (session, args, next) {
             session.dialogData.args = args || {};        
             if (!session.conversationData["username"]) {
-                builder.Prompts.text(session, "Enter a username to setup your account.");        
+                builder.Prompts.text(session, "Enter a username to login to your account.");        
             } else {
                 next(); // Skip if we already have this info.
             }
