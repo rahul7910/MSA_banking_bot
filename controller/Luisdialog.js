@@ -8,7 +8,7 @@ var currency = require("./conversion");
 
 exports.startDialog = function (bot) {
     // Replace {YOUR_APP_ID_HERE} and {YOUR_KEY_HERE} with your LUIS app ID and your LUIS key, respectively.
-    var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q= ');
+    var recognizer = new builder.LuisRecognizer(' 	https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/344375bc-c389-4180-bd11-49113e8650f9?subscription-key=705d751bd37b4737b70f7a3df056170f&verbose=true&timezoneOffset=0&q= ');
     
     bot.recognizer(recognizer);
 //global variables for timing the session.send message 
