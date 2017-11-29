@@ -4,7 +4,7 @@ var builder = require('botbuilder');
 
 
 exports.displayCards = function getHelpData(session, username){
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     rest.getHelpData(url, session,username, userOptions);
 }
 

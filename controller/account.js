@@ -4,14 +4,14 @@ var GreetingCardBuilder = require('./GreetingCard');
 
 // Withdraw money
 exports.withdraw = function withdraw(session, username, amount) {
-    var urlAccounts = 'http://contosobb.azurewebsites.net/tables/accounts';
-    var urlCheckTable = 'http://contosobb.azurewebsites.net/tables/checks';
+    var urlaccount = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
+    var urlCheckTable = 'http://contoso-bb.azurewebsites.net/tables/checks';
     rest.getBalance2(urlAccounts, amount, session, username, enoughBalance);
 }
 
 exports.deposit = function deposit(session, username, amount) {
-    var urlAccounts = 'http://contosobb.azurewebsites.net/tables/accounts';
-    var urlCheckTable = 'http://contosobb.azurewebsites.net/tables/checks';
+    var urlAccounts = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
+    var urlCheckTable = 'http://contoso-bb.azurewebsites.net/tables/checks';
     rest.getBalance2(urlAccounts, amount, session, username, depositBalance);
 }
 
@@ -41,8 +41,8 @@ function enoughBalance(message, amount, session, username) {
         greater.toFixed(2);
         console.log(greater);
         if (greater >= 0.00) {
-            var urlCheckTable = 'http://contosobb.azurewebsites.net/tables/checks';
-            var urlAccounts = 'http://contosobb.azurewebsites.net/tables/accounts' + idExist;
+            var urlCheckTable = 'http://contoso-bb.azurewebsites.net/tables/checks';
+            var urlAccounts = 'http://contoso-bb-mobile.azurewebsites.net/tables/account' + idExist;
             
             rest.deductAmount(urlAccounts, greater, amount, session);
         } else {
@@ -91,8 +91,8 @@ function depositBalance(message, amount, session, username) {
         greater.toFixed(2);
         console.log(greater);
         if (greater >= 0.00) {
-            var urlCheckTable = 'http://contosobb.azurewebsites.net/tables/checks';
-            var urlAccounts = 'http://contosobb.azurewebsites.net/tables/accounts' + idExist;
+            var urlCheckTable = 'http://contoso-bb.azurewebsites.net/tables/checks';
+            var urlAccounts = 'http://contoso-bb-mobile.azurewebsites.net/tables/account' + idExist;
             
             rest.addAmount(urlAccounts, greater, amount, session);
         } else {
@@ -106,7 +106,7 @@ function depositBalance(message, amount, session, username) {
 //what do these do? 
 
 function beforeIDHolder(message, session, amount) {
-    var urlCheckTable = 'http://contosobb.azurewebsites.net/tables/checks';
+    var urlCheckTable = 'http://contoso-bb.azurewebsites.net/tables/checks';
     rest.AddCheck(urlCheckTable, session, amount, idHolder);
 }
 
@@ -123,7 +123,7 @@ function idHolder(message, session) {
 
 // GetBalance
 exports.displayBalance = function getBalance(session, username){
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     rest.getBalance(url, session, username, handleBalanceResponse)
 };
 function handleBalanceResponse(message, session, username) {
@@ -156,11 +156,11 @@ function handleBalanceResponse(message, session, username) {
 
 // handle login
 exports.NewLogin = function NewLogin(session, username){
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     rest.NewLogin(url, session, username, handleUndefinedUser)
 };
 function handleUndefinedUser(message,session,username) {
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     var handleExistance = JSON.parse(message);
     var idExist;
     for (var index in handleExistance) {
@@ -179,11 +179,11 @@ function handleUndefinedUser(message,session,username) {
 
 // add new user
 exports.AddAccount = function AddAccount(session, username){
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     rest.userExist(url,session,username,handleExistance);
 };
 function handleExistance(message,session,username) {
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     var handleExistance = JSON.parse(message);
     var idExist;
     for (var index in handleExistance) {
@@ -206,12 +206,12 @@ function handleExistance(message,session,username) {
 
 //delete user
 exports.deleteUser = function deleteUser(session, username){
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     rest.userExist(url,session,username,handleUserForDelete);
 };
 
 function handleUserForDelete(message,session,username) {
-    var url = 'http://contosobb.azurewebsites.net/tables/accounts';
+    var url = 'http://contoso-bb-mobile.azurewebsites.net/tables/account';
     var handleExistance = JSON.parse(message);
     var idExist;
     for (var index in handleExistance) {
