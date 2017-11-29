@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html>
+<!-- Template by Quackit.com -->
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Contoso Bank Limited</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <!--Linking CSS files to style the website-->
-    <link href="style.css" rel="stylesheet" />
+    <title>Corporate 1</title>
 
-    <script type="text/javascript">
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS: Can use this stylesheet to override any Bootstrap styles?? decide later -->
+    <link href="css/custom.css" rel="stylesheet">
+
+   
+	<script type="text/javascript">
         function openChat() {
             var frame = document.getElementById("chat-frame");
             frame.className = "";
@@ -22,44 +31,176 @@
             img.className = "";
         }
     </script>
+	
 </head>
+
 <body>
 
-    <div id="titleBlock">
-        <img src="res/images/msp_logo.png" id="logo" />
-		
-		
-        <h1 id="heading">Contoso Bank Limited</h1>
-    </div>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Logo and responsive toggle -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                	<span class="glyphicon glyphicon-fire"></span> 
+                	Logo
+                </a>
+            </div>
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="#">Home</a>
+                    </li>
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a href="#">Products</a>
+                    </li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Services <span class="caret"></span></a>
+						<ul class="dropdown-menu" aria-labelledby="about-us">
+							<li><a href="#">Engage</a></li>
+							<li><a href="#">Pontificate</a></li>
+							<li><a href="#">Synergize</a></li>
+						</ul>
+					</li>
+                </ul>
 
-    <div id="content">
-        <div id="left-content">
-            <p>
-             
-			 An award winning bank which is currently expanding it's wings to better serve customers. 
+				<!-- Search -->
+				<form class="navbar-form navbar-right" role="search">
+					<div class="form-group">
+						<input type="text" class="form-control">
+					</div>
+					<button type="submit" class="btn btn-default">Search</button>
+				</form>
 
-			Our new bot (name of bot) will help you with any problems or queries you may have. (name of bot) provides the following services: 
-			
-			- Create an account 
-			- Login to account 
-			- Check balance 
-			
-			More features to be released soon ! 
-			</p>
+            </div>
+            <!-- /.navbar-collapse -->
         </div>
-        <div id="right-content">
-            <img src="res/images/vs.PNG" />
-            <img src="res/images/botframework.PNG" />
-        </div>
-    </div>
+        <!-- /.container -->
+    </nav>
 
-    <div id="chat">
-        <img id="chat-button" src="res/images/chatico.png" onclick="openChat()" />
+	<div class="jumbotron feature">
+		<div class="container">
+			<h1><span class="glyphicon glyphicon-equalizer"></span> Contoso-Bank</h1>
+			<p>		Award winning bank - continously inspiring </p>
+			<p><a class="btn btn-default" href="#">Engage Now</a></p>
+		</div>
+	</div>
+
+    <!-- Content -->
+    <div class="container">
+
+        <!-- Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Contoso's BB
+                </h1>
+                <p> The new Contoso BB provides instant communication just like having a regular conversation with a human. The introduction of this new bot will allow you as a customer to create an account, login, logout and it will also allow you to view the current exchange rates and compare it against other currencies. We are currently working on adding more features such as deposits and withdraw transactions and viewing your balance.</p>
+            </div>
+        </div>
+        <!-- /.row -->
+		
+
+        <!-- Feature Row -->
+        <div class="row">
+            <article class="col-md-4 article-intro">
+                <a href="#">
+                    <img class="img-responsive img-rounded" src="images/hi.png" height ="1200" width  = "1200" alt="">
+                </a>
+                <h3>
+                    <a href="#">Start the conversation!</a>
+                </h3>
+                <p>Simply type "Hi" or "hello" , Contoso BB will then provide you with options to choose from.</p>
+            </article>
+            <article class="col-md-4 article-intro">
+                <a href="#">
+                    <img class="img-responsive img-rounded" src="images/createAcc.png" alt="" height ="1200" width  = "1200" >
+                </a>
+                <h3>
+                    <a href="#">Join the team</a>
+                </h3>
+                <p>Clicking the "create account" will prompt you to enter a username of your choice. This will then get stored in our database as an account which you can use to login with later on.</p>
+            </article>
+
+            <article class="col-md-4 article-intro">
+                <a href="#">
+                    <img class="img-responsive img-rounded" src="images/currency.png" alt="" height ="1200" width  = "1200">
+                </a>
+                <h3>
+                    <a href="#">Stay Updated</a>
+                </h3>
+                <p>The check exchange rate allows you to stay updated with the latest exchange rates. </p>
+            </article>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+	
+	<footer>
+		<div class="footer-blurb">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-4 footer-blurb-item">
+						<h3><span class="glyphicon glyphicon-fire"></span> Image-To-Text</h3>
+						<p>Want to know what currency is sitting in your wallet? Upload the picture from your computer and we will let you know !</p>
+						<p><a class="btn btn-default" href="#">Image-To-Text</a></p>
+					</div>
+					<div class="col-sm-4 footer-blurb-item">
+						<h3><span class="glyphicon glyphicon-cloud-upload"></span> Withdraw (Coming soon!) </h3>
+						<p>We will be releasing a new feature of allowing you to withdraw money from your bankaccount.</p>
+						<p><a class="btn btn-default" href="#">Withdraw</a></p>
+					</div>
+					<div class="col-sm-4 footer-blurb-item">
+						<h3><span class="glyphicon glyphicon-leaf"></span>Deposit</h3>
+						<p>We will be releasing a new feature of allowing you to deposit</p>
+						<p><a class="btn btn-default" href="#">Deposit</a></p>
+					</div>
+
+				</div>
+				<!-- /.row -->	
+			</div>
+        </div>
+        
+        <div class="small-print">
+        	<div class="container">
+        		<p><a href="#">Terms &amp; Conditions</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
+        		<p>Copyright &copy; Rahul Issar MSA </p>
+        	</div>
+        </div>
+	</footer>
+
+	
+    <!-- jQuery -->
+    <script src="js/jquery-1.11.3.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+	
+	<!-- IE10 viewport bug workaround -->
+	<script src="js/ie10-viewport-bug-workaround.js"></script>
+	
+	<!-- Placeholder Images -->
+	<script src="js/holder.min.js"></script>
+	
+	
+	 <div id="chat">
+        <img id="chat-button" src="images/message.png" onclick="openChat()" />
         <div id="chat-frame" class="hide">
-            <iframe src='https://webchat.botframework.com/embed/andrew-test-bot?s=PJFurSqPjgU.cwA.HN4.ehCU9QX6AbBjXcEHoYy2F18CnK_d5tre-zpTjk1kCcc'></iframe>
-			<img src="res/images/minus.png" onclick="closeChat()" />
+            <iframe src='https://webchat.botframework.com/embed/Contoso-BB?s=sJJeawGuADg.cwA.99M.oUtHCgVlxABLu3xdpvjzox4335DpBt2HYA0GH-u5PlU'></iframe>
+			<!--'https://webchat.botframework.com/embed/Contoso-BB?s=sJJeawGuADg.cwA.99M.oUtHCgVlxABLu3xdpvjzox4335DpBt2HYA0GH-u5PlU'--> 
+			<img src="images/minus.png" onclick="closeChat()" />
         </div>
     </div>
-
 </body>
+
 </html>
