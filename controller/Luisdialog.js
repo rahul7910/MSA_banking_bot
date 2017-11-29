@@ -11,11 +11,11 @@ exports.startDialog = function (bot) {
     var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q= ');
     
     bot.recognizer(recognizer);
-//global variables 
+//global variables for timing the session.send message 
     var n=0;
     var current=0;
   
-    /*
+    /* close the bot any time it wants to 
     bot.dialog('closeServices', function(session, args) { 
         session.send("Hi Rahul!");
     }).triggerAction({
@@ -23,12 +23,13 @@ exports.startDialog = function (bot) {
     });
 */
 
+/*
     bot.dialog('WelcomeIntent', 
         function (session, args, next) {
             session.dialogData.args = args || {};        
             if (!session.conversationData["username"]) {
                 // session.send("Hello !!");
-                GreetingCardBuilder.displayStarterCard(session);  // <---- THIS LINE HERE IS WHAT WE NEED 
+                GreetingCardBuilder.displayStarterCard(session);  // this will call the welcome menu 
                    
             } else {
                 next(); // Skip if we already have this info.
@@ -46,7 +47,16 @@ exports.startDialog = function (bot) {
     ).triggerAction({
         matches: 'WelcomeIntent'
     });
+*/
 
+
+bot.dialog('WelcomeIntent', function (session, args) {
+    
+    GreetingCardBuilder.displayStarterCard(session);
+
+}).triggerAction({
+    matches: 'WelcomeIntent'
+});
 
     bot.dialog('Login', [
         function (session, args, next) {
@@ -259,7 +269,7 @@ exports.startDialog = function (bot) {
                     function(session, results, args, next) {
                         if (checkcurrency(results.response)){
                             session.conversationData["base"] = results.response;
-                            builder.Prompts.text(session,"Enter currency rate based on the currency you entered");
+                            builder.Prompts.text(session,"Enter currency to compare against");
                         }else{
                             //if the response is false restart again 
                             session.send("The currency format entered is not right");
