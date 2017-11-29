@@ -23,7 +23,7 @@ exports.startDialog = function (bot) {
     });
 */
 
-/*
+
     bot.dialog('WelcomeIntent', 
         function (session, args, next) {
             session.dialogData.args = args || {};        
@@ -47,9 +47,9 @@ exports.startDialog = function (bot) {
     ).triggerAction({
         matches: 'WelcomeIntent'
     });
-*/
 
-
+//not working for some reason ? 
+/*
 bot.dialog('WelcomeIntent', function (session, args) {
     
     GreetingCardBuilder.displayStarterCard(session);
@@ -57,7 +57,7 @@ bot.dialog('WelcomeIntent', function (session, args) {
 }).triggerAction({
     matches: 'WelcomeIntent'
 });
-
+*/
     bot.dialog('Login', [
         function (session, args, next) {
             session.dialogData.args = args || {};        
