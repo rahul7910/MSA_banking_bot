@@ -41,13 +41,17 @@ function helpUser(message, session, username) {
     var sendCall1 = 'deposit';
     var sendCall2 = 'withdraw';
     var sendCall3 = 'logout';
+    var sendCall4 = 'Check Currency rate'; 
+    var sendCall5 = 'Image to text';
     var card = new builder.HeroCard(session)
         .title('Hello, %s! How can I help you?', username)
         .buttons([
             builder.CardAction.imBack(session, sendCall, 'Check Balance'),
             builder.CardAction.imBack(session, sendCall1, 'Deposit'),
             builder.CardAction.imBack(session, sendCall2, 'Withdraw'),
-            builder.CardAction.imBack(session, sendCall3, 'Logout')
+            builder.CardAction.imBack(session, sendCall3, 'Logout'),
+            builder.CardAction.imBack(session, sendCall4, 'Check Currency Rate'), 
+            builder.CardAction.imBack(session, sendCall5, 'Currency Image to text'),
         ]);
     attachment.push(card);      
     //Displays restaurant hero card carousel in chat box 

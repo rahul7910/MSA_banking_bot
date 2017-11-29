@@ -8,7 +8,7 @@ var currency = require("./CurrencyRate");
 
 exports.startDialog = function (bot) {
     // Replace {YOUR_APP_ID_HERE} and {YOUR_KEY_HERE} with your LUIS app ID and your LUIS key, respectively.
-    var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q=');
+    var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/5fdaa196-1c51-4fdc-822e-777e68ef3d03?subscription-key=ff6167bbc0c640f48dda5060375cfedb&verbose=true&timezoneOffset=0&q= ');
     
     bot.recognizer(recognizer);
 //global variables 
@@ -146,7 +146,7 @@ exports.startDialog = function (bot) {
     //DeleteAccount
     bot.dialog('DeleteAccount', [
         function (session, args, next) {
-            if(!isAttachment(session)){
+           // if(!isAttachment(session)){
             session.dialogData.args = args || {};
             if (!session.conversationData["username"]) {
                 //same as the login ting yeh , need an account to delete it 
@@ -154,9 +154,9 @@ exports.startDialog = function (bot) {
             } else {
                 next(); // Skip if we already have this info.
             }
-        }},
+        },
         function (session, results,next) {
-            if(!isAttachment(session)){
+          //  if(!isAttachment(session)){
             //Add this code in otherwise your username will not work?
             if (results.response) {
                 session.conversationData["username"] = results.response;
@@ -166,7 +166,10 @@ exports.startDialog = function (bot) {
             
             session.send('Deleting \'%s\'...', session.conversationData["username"]);
             account.deleteUser(session, session.conversationData["username"]); //<--- CALLL WE WANT
-        }
+          //  session.send('Deleted account'); 
+          //Notify user it has been deleted 
+
+        //}
     }
     ]).triggerAction({
         matches: 'DeleteAccount'
